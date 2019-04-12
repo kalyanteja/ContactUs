@@ -1,0 +1,32 @@
+body {
+  font-family: "Open Sans", serif;
+}
+
+.wrapper {
+  background: linear-gradient(to right, #ffd800, #e74e3c);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  height: 500px;
+  background: #fff;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.form-container {
+    border-left: solid 1px #fc084b;
+    height: 500px;
+    padding-top: 10px;
+    padding-left: 100px;
+}
+
+input {
+  padding-right: 6px;
+  padding-bottom: 4px;
+  font-weight: lighter;
+  letter-spacing: 2px;
+}
