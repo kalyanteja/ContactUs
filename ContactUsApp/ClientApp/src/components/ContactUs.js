@@ -88,7 +88,7 @@ class ContactUs extends Component {
             </form>
         );
 
-        const messageCode = (<p> Appreciate your feedback {this.state.userName}, we'll contact you soon! </p>);
+        const messageCode = (<p className="mt-7"> Appreciate your feedback {this.state.userName}, we'll contact you soon! </p>);
 
         return (
             <div>
