@@ -8,12 +8,11 @@ class ContactUs extends Component {
             userName: "",
             email: "",
             message: "",
-            messageSent: false,
             isValid: true,
-            serverError: false
+            savedSuccessfully: false,
+            showErrorMessage: false
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handleMessageChange = this.handleMessageChange.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -22,9 +21,11 @@ class ContactUs extends Component {
     handleEmailChange(e) {
         this.setState({ email: e.target.value });
     }
+
     handleUserNameChange(e) {
         this.setState({ userName: e.target.value });
     }
+
     handleMessageChange(e) {
         this.setState({ message: e.target.value });
     }
@@ -40,29 +41,34 @@ class ContactUs extends Component {
             && this.isNotEmpty(this.state.message)
     }
 
-    handleSubmit(e){
+    sendUserMessage = async (e) => {
         e.preventDefault();
+        console.log('sending message');
+
+        this.setState({ showErrorMessage: false });
         if (this.areInputsValid()) {
-            console.log(this.state)
-            fetch('/api/ContactUsMessage/SendContactUsMessage', {
+            this.setState({ isValid: true });
+            //calling the MVC api to insert the form data
+            const dbCall = await fetch('/api/ContactUsMessage/SendContactUsMessage', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(this.state)
-            }).then(res => {
-                console.log(res);
-                this.setState({ serverError: !res.ok });
-            }).catch(err => console.log);
+            });
+
+            const dbResponse = dbCall;
+            this.setState({ showErrorMessage: !dbResponse.ok, savedSuccessfully: dbResponse.ok });
         } else {
-            this.setState({ isValid: false });
+            this.setState({ isValid: false, savedSuccessfully: false });
         }
     }
 
     render() {
         const formCode = (
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.sendUserMessage}>
+                <h2>Give us your feedback</h2>
                 <div className="form-element">
                     <input type="text" className="w-50" id="userName" placeholder="your name..." value={this.state.userName}
                         onChange={this.handleUserNameChange} />
@@ -82,13 +88,12 @@ class ContactUs extends Component {
             </form>
         );
 
-        const messageCode = (<p> {this.state.serverError ? "Oops, please try again later..." : "Appreciate your feedback {this.state.userName}, we'll contact you soon!"} </p>);
+        const messageCode = (<p> Appreciate your feedback {this.state.userName}, we'll contact you soon! </p>);
 
         return (
             <div>
-                <h2>{this.state.messageSent ? "Thanks!" : "Give us your feedback"}</h2>
-                <br/>
-                {this.state.messageSent ? messageCode : formCode}
+                {this.state.savedSuccessfully && !this.state.showErrorMessage ? messageCode : formCode}
+                {this.state.showErrorMessage && "Oops, please try again later..."}
             </div>
         );
     }
